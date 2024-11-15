@@ -58,7 +58,7 @@ def read_item():
     return {"name": resp[0].get("name")}
 
 
-@app.post("/update")
+@app.post("/user/update")
 def read_item(name = "Ward Smeyers"):
     app.collection.update_one({ "_id": 1 }, { "$set": { "name": name } })
     
