@@ -54,12 +54,13 @@ def read_root():
 
 @app.get("/user")
 def read_item():
-    resp = app.collection.find({ "_id": 1})
-    for name in resp:
-        return {"name": name.get("name")}
+    resp = app.collection.find({ "_id": 1}).to_list()
+    return {"name": resp[0].get("name")}
 
 
 @app.post("/update")
 def read_item(name = "Ward Smeyers"):
     app.collection.update_one({ "_id": 1 }, { "$set": { "name": name } })
-    return {"name": name}
+    
+    resp = app.collection.find({ "_id": 1}).to_list()
+    return {"name": resp[0].get("name")}
