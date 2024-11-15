@@ -1,0 +1,26 @@
+services:
+  web:
+    image: sebp/lighttpd # https://github.com/spujadas/lighttpd-docker
+    volumes:
+      - ./web/index.html:/var/www/localhost/htdocs/index.html
+      # - ./web/lighttpd:/etc/lighttpd
+    ports:
+      - 80:80
+    tty: true
+
+  api:
+    build: ./api
+    ports:
+      - 8080:8080
+    volumes:
+      - ./api:/api
+    
+  # db:
+  #   image: mongo:latest
+  #   volumes:
+  #     - ./db:/data/db
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   ports:
+  #     - 27017:27017
