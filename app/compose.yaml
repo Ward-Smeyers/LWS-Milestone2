@@ -7,6 +7,9 @@ services:
     ports:
       - 80:80
     tty: true
+    depends_on:
+      - api
+    restart: unless-stopped
 
   api:
     build: ./api
@@ -14,13 +17,20 @@ services:
       - 8080:8080
     volumes:
       - ./api:/api
+    depends_on:
+      - db
+    restart: unless-stopped
     
-  # db:
-  #   image: mongo:latest
-  #   volumes:
-  #     - ./db:/data/db
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: root
-  #     MONGO_INITDB_ROOT_PASSWORD: example
-  #   ports:
-  #     - 27017:27017
+  db:
+    image: mongodb/mongodb-community-server
+    volumes:
+      - db:/data/db
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
+volumes:
+  db:
+    driver: local
