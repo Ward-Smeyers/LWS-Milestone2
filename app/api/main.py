@@ -24,7 +24,7 @@ app.add_middleware(
 def startup_db_client():
     print("Connecting to the MongoDB database!")
     app.mongodb_client = MongoClient(f'mongodb://{environ["MONGODB_USERNAME"]}:{environ["MONGODB_PASSWORD"]}@{environ["MONGODB_HOST"]}', tls=False)
-    app.database = app.mongodb_client[environ["DB_NAME"]]
+    app.database = app.mongodb_client[environ["MONGODB_HOST"]]
     app.collection = app.database["name"]
     try:
         app.mongodb_client.admin.command("ping")
