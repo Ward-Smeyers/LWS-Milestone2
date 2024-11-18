@@ -1,0 +1,26 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milestone2-ingress
+  namespace: default
+spec:
+  rules:
+    - host: milestone2.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  name: http
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  name: apiport
+
