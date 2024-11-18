@@ -1,18 +1,19 @@
 services:
   web:
-    image: ghcr.io/ward-smeyers/lws-milestone2-web:main
+    build: ./web
     ports:
       - 80:80
+    volumes:
+      - ./web:/var/www/localhost/htdocs
     tty: true
     depends_on:
       - api
     restart: unless-stopped
 
   api:
-    image: ghcr.io/ward-smeyers/lws-milestone2-api:main
+    build: ./api
     environment:
-      - FRONTEND_URL=http://milestone2.local/
-      - BACKEND_URL=http://api.milestone2.local:8080/
+      - FRONTEND_URL=http://milestone2.local
       - MONGODB_USERNAME=${MONGODB_INITDB_ROOT_USERNAME}
       - MONGODB_PASSWORD=${MONGODB_INITDB_ROOT_PASSWORD}
       - MONGODB_HOST=db
