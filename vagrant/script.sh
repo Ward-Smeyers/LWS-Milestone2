@@ -105,6 +105,6 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/mast
 kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
 
 # apply k8s resources
-# kubectl apply -f /kind/hello-world/deployment.yaml
-# kubectl apply -f /kind/hello-world/service.yaml
-# kubectl apply -f /kind/hello-world/ingress.yaml
+# kubectl apply -f /app/deployment.yaml
+# kubectl apply -f /app/service.yaml
+# kubectl apply -f /app/ingress.yaml
