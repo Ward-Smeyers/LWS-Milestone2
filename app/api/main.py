@@ -1,16 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import dotenv_values
+from os import environ
 from pymongo import MongoClient
 
-
-config = dotenv_values(".env")
 
 app = FastAPI()
 
 origins = [
-    "http://192.168.56.5",
-    "http://192.168.56.5:8080",
+    environ["FRONTEND_URL"],
+    environ["BACKEND_URL"]
 ]
 
 app.add_middleware(
@@ -25,8 +23,8 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_db_client():
     print("Connecting to the MongoDB database!")
-    app.mongodb_client = MongoClient(f'mongodb://{config["MONGODB_USERNAME"]}:{config["MONGODB_PASSWORD"]}@{config["HOST"]}', tls=False)
-    app.database = app.mongodb_client[config["DB_NAME"]]
+    app.mongodb_client = MongoClient(f'mongodb://{environ["MONGODB_USERNAME"]}:{environ["MONGODB_PASSWORD"]}@{environ["MONGODB_HOST"]}', tls=False)
+    app.database = app.mongodb_client[environ["DB_NAME"]]
     app.collection = app.database["name"]
     try:
         app.mongodb_client.admin.command("ping")
