@@ -1,0 +1,3 @@
+# https://github.com/spujadas/lighttpd-docker
+FROM sebp/lighttpd:latest 
+COPY index.html /var/www/localhost/htdocs
