@@ -7,8 +7,7 @@ from pymongo import MongoClient
 app = FastAPI()
 
 origins = [
-    environ["FRONTEND_URL"],
-    environ["BACKEND_URL"]
+    environ["FRONTEND_URL"]
 ]
 
 app.add_middleware(
