@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from os import environ
+from time import sleep
 from pymongo import MongoClient
 
 
@@ -26,13 +27,18 @@ def startup_db_client():
     app.mongodb_client = MongoClient(f'mongodb://{environ["MONGODB_USERNAME"]}:{environ["MONGODB_PASSWORD"]}@{environ["MONGODB_HOST"]}', tls=False)
     app.database = app.mongodb_client[environ["MONGODB_HOST"]]
     app.collection = app.database["name"]
-    try:
-        app.mongodb_client.admin.command("ping")
-        print("Connected to the MongoDB database!")
-    except Exception as e:
-        print("Unable to connect to the database")
-        print(f"error: {e}")
-    
+    connected = False
+    retry_count = 0
+    while connected == False:
+        try:
+            app.mongodb_client.admin.command("ping")
+            connected = True
+            print("Connected to the MongoDB database!")
+        except Exception as e:
+            print("Unable to connect to the database")
+            print(f"error: {e}")
+            sleep(2**retry_count)
+        
     if app.collection.find({ "_id": 1}).to_list() == []:
         print("Database is empty!\nInserting data!")
         app.collection.insert_one({ "_id": 1, "name": "Ward Smeyers" })
