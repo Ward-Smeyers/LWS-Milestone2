@@ -34,9 +34,9 @@ def startup_db_client():
         try:
             app.mongodb_client.admin.command("ping")
             connected = True
-            print("Connected to the MongoDB database!")
+            print(f"Connected to the MongoDB database! after {retry_count} retries")
         except Exception as e:
-            print("Unable to connect to the database")
+            print(f"Unable to connect to the database on try {retry_count}!")
             print(f"error: {e}")
             if retry_count >= max_retries:
                 print("Max retries reached, exiting!")
