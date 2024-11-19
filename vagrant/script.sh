@@ -104,7 +104,11 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/mast
 # wait for ingress-nginx to be ready
 kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
 
+GITHUB_USERNAME=Ward-Smeyers
+GITHUB_TOKEN=$(cat /vagrant/.ghcr.io_token)
+kubectl create secret docker-registry ghcr-login-secret --docker-server=https://ghcr.io --docker-username=$GITHUB_USERNAME --docker-password=$GITHUB_TOKEN 
+
 # apply k8s resources
-# kubectl apply -f /app/deployment.yaml
-# kubectl apply -f /app/service.yaml
-# kubectl apply -f /app/ingress.yaml
+kubectl apply -f /app/deployment.yaml
+kubectl apply -f /app/service.yaml
+kubectl apply -f /app/ingress.yaml
