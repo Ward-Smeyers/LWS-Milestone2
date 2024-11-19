@@ -23,6 +23,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_db_client():
+    print(f"Cross-Origin Resource Sharing enabled for {origins}!")
     print("Connecting to the MongoDB database!")
     app.mongodb_client = MongoClient(f'mongodb://{environ["MONGODB_USERNAME"]}:{environ["MONGODB_PASSWORD"]}@{environ["MONGODB_HOST"]}', tls=False)
     app.database = app.mongodb_client[environ["MONGODB_HOST"]]
