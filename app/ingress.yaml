@@ -5,6 +5,11 @@ metadata:
   name: milestone2-ingress
   namespace: default
 spec:
+  tls:
+    - hosts:
+      - milestone2.local
+      - api.milestone2.local
+      secretName: smeyers-tls
   rules:
     - host: milestone2.local
       http:

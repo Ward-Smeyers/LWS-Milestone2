@@ -28,13 +28,13 @@ spec:
             httpGet:
               path: /
               port: webport
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             periodSeconds: 5
           readinessProbe: # checks if the server is ready to accept traffic
             httpGet:
               path: /
               port: webport
-            initialDelaySeconds: 10
+            initialDelaySeconds: 2
           resources:
             limits:
               memory: "512Mi"
@@ -72,7 +72,7 @@ spec:
           - name: MONGODB_HOST
             value: "db-service"
           - name: FRONTEND_URL
-            value: "http://milestone2.local,https://milestone2.local"
+            value: "*"
           - name: MAX_RETRIES
             value: "5"
           ports:
@@ -82,13 +82,13 @@ spec:
             httpGet:
               path: /
               port: apiport
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             periodSeconds: 5
           readinessProbe: # checks if the server is ready to accept traffic
             httpGet:
               path: /
               port: apiport
-            initialDelaySeconds: 10
+            initialDelaySeconds: 2
           resources:
             limits:
               memory: "512Mi"
