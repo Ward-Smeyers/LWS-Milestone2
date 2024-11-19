@@ -14,23 +14,27 @@ spec:
       labels:
         app: web
     spec: # this is our pod spec!
+      imagePullSecrets:
+      - name: ghcr-login-secret
       containers:
         - name: web
-          image: sebp/lighttpd
+          image: ghcr.io/ward-smeyers/lws-milestone2-web:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
-              name: http # from now on we can use the name http to refer to this port
+              name: webport # from now on we can use the name http to refer to this port
+          tty: true
           livenessProbe: # checks if the server still works every 5 seconds
             httpGet:
               path: /
-              port: http
-            initialDelaySeconds: 5
+              port: webport
+            initialDelaySeconds: 10
             periodSeconds: 5
           readinessProbe: # checks if the server is ready to accept traffic
             httpGet:
               path: /
-              port: http
-            initialDelaySeconds: 2
+              port: webport
+            initialDelaySeconds: 10
           resources:
             limits:
               memory: "512Mi"
@@ -38,46 +42,58 @@ spec:
             requests:
               memory: "64Mi"
               cpu: "250m"
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: milestone2-api
-#   namespace: default
-# spec:
-#   selector:
-#     matchLabels:
-#       app: api
-#   replicas: 1
-#   template:
-#     metadata:
-#       labels:
-#         app: api
-#     spec: # this is our pod spec!
-#       containers:
-#         - name: api
-#           build: /app/api
-#           ports:
-#             - containerPort: 80
-#               name: apiport # from now on we can use the name http to refer to this port
-#           livenessProbe: # checks if the server still works every 5 seconds
-#             httpGet:
-#               path: /
-#               port: apiport
-#             initialDelaySeconds: 5
-#             periodSeconds: 5
-#           readinessProbe: # checks if the server is ready to accept traffic
-#             httpGet:
-#               path: /
-#               port: apiport
-#             initialDelaySeconds: 2
-#           resources:
-#             limits:
-#               memory: "512Mi"
-#               cpu: "500m"
-#             requests:
-#               memory: "64Mi"
-#               cpu: "100m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: milestone2-api
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api
+    spec: # this is our pod spec!
+      imagePullSecrets:
+      - name: ghcr-login-secret
+      containers:
+        - name: api
+          image: ghcr.io/ward-smeyers/lws-milestone2-api:main
+          imagePullPolicy: Always
+          env:
+          - name: MONGODB_USERNAME
+            value: "root"
+          - name: MONGODB_PASSWORD
+            value: "kqjhgksdgyaqjbsdkflghqklhsdnjqHBSKD"
+          - name: MONGODB_HOST
+            value: "db-service"
+          - name: FRONTEND_URL
+            value: "http://milestone2.local"
+          ports:
+            - containerPort: 80
+              name: apiport # from now on we can use the name http to refer to this port
+          livenessProbe: # checks if the server still works every 5 seconds
+            httpGet:
+              path: /
+              port: apiport
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe: # checks if the server is ready to accept traffic
+            httpGet:
+              path: /
+              port: apiport
+            initialDelaySeconds: 10
+          # resources:
+          #   limits:
+          #     memory: "512Mi"
+          #     cpu: "500m"
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "100m"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -102,9 +118,9 @@ spec:
             value: "root"
           - name: MONGODB_INITDB_ROOT_PASSWORD
             value: "kqjhgksdgyaqjbsdkflghqklhsdnjqHBSKD"
-          volumesmounts:
-            - name: db-persistent-storage
-              mountPath: /data/db
+          # volumesmounts:
+          #   - name: db-persistent-storage
+          #     mountPath: /data/db
           ports:
             - containerPort: 27017
               name: dbport # from now on we can use the name http to refer to this port
@@ -126,7 +142,7 @@ spec:
             requests:
               memory: "64Mi"
               cpu: "100m"
-      volumes:
-        - name: db-persistent-storage
-          persistentVolumeClaim:
-            claimName: db-persistent-storage
+      # volumes:
+      #   - name: db-persistent-storage
+      #     persistentVolumeClaim:
+      #       claimName: db-persistent-storage

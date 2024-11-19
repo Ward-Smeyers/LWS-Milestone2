@@ -11,7 +11,7 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: http
+      targetPort: webport
 ---
 apiVersion: v1
 kind: Service

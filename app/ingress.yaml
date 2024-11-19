@@ -13,14 +13,17 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: web
+                name: web-service
                 port:
-                  name: http
-          - path: /user
+                  name: webport
+    - host: api.milestone2.local
+      http:
+        paths:
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: api
+                name: api-service
                 port:
                   name: apiport
 
