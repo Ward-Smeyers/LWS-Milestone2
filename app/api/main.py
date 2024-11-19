@@ -9,11 +9,6 @@ app = FastAPI()
 origins = [
     environ["FRONTEND_URL"]
 ]
-print(f"Allowed origins: {origins}")
-print(f"FRONTEND_URL: {environ['FRONTEND_URL']}")
-print(f"MONGODB_USERNAME: {environ['MONGODB_USERNAME']}")
-print(f"MONGODB_PASSWORD: {environ['MONGODB_PASSWORD']}")
-print(f"MONGODB_HOST: {environ['MONGODB_HOST']}")
 
 
 app.add_middleware(
