@@ -29,6 +29,7 @@ def startup_db_client():
     app.collection = app.database["name"]
     connected = False
     retry_count = 0
+    max_retries = environ["MAX_RETRIES"]
     while connected == False:
         try:
             app.mongodb_client.admin.command("ping")
@@ -37,6 +38,9 @@ def startup_db_client():
         except Exception as e:
             print("Unable to connect to the database")
             print(f"error: {e}")
+            if retry_count >= max_retries:
+                print("Max retries reached, exiting!")
+                exit(1)
             sleep(2**retry_count)
         
     if app.collection.find({ "_id": 1}).to_list() == []:
