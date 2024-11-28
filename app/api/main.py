@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from os import environ
+import socket
 from time import sleep
 from pymongo import MongoClient
 
@@ -73,3 +74,9 @@ def read_item(name = "Ward Smeyers"):
     
     resp = app.collection.find({ "_id": 1}).to_list()
     return {"name": resp[0].get("name")}
+
+@app.get("/id")
+def read_item():
+    resp = socket.gethostname()
+    print(resp)
+    return {"id": resp}

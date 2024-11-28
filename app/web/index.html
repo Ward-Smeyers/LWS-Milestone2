@@ -9,6 +9,8 @@
   <body>
     <h1><span id="user">Loading...</span> has reached milestone 2!</h1>
 
+    <p>container id: <span  id="id">Loading...</span></p>
+
     <script>
       // fetch user from API
       fetch("https://api.milestone2.smeyers.xyz/user")
@@ -18,6 +20,14 @@
           const user = data.name;
           // display user name
           document.getElementById("user").innerText = user;
+        });
+        fetch("https://api.milestone2.smeyers.xyz/id")
+        .then((res) => res.json())
+        .then((data) => {
+          // get user name
+          const id = data.id;
+          // display user name
+          document.getElementById("id").innerText = id;
         });
     </script>
   </body>
