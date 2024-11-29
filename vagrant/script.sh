@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# set timezone and enable ntp
+timedatectl set-timezone Europe/Brussels
+timedatectl set-ntp true
+
 # Add Docker's official GPG key:
 apt-get update
 apt-get install -y ca-certificates curl virtualbox-guest-utils
