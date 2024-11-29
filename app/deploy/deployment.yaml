@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       app: web
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -52,7 +52,7 @@ spec:
   selector:
     matchLabels:
       app: api
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
@@ -66,15 +66,26 @@ spec:
           imagePullPolicy: Always
           env:
           - name: MONGODB_USERNAME
-            value: "root"
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-creds-secret
+                key: mongodb-username
+
           - name: MONGODB_PASSWORD
-            value: "kqjhgksdgyaqjbsdkflghqklhsdnjqHBSKD"
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-creds-secret
+                key: mongodb-password
+
           - name: MONGODB_HOST
             value: "db-service"
+
           - name: FRONTEND_URL
-            value: "*"
+            value: "https://milestone2.smeyers.xyz"
+
           - name: MAX_RETRIES
             value: "5"
+
           ports:
             - containerPort: 80
               name: apiport # from now on we can use the name http to refer to this port
@@ -88,6 +99,57 @@ spec:
             httpGet:
               path: /
               port: apiport
+            initialDelaySeconds: 2
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: milestone2-db
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: db
+    spec: # this is our pod spec!
+      containers:
+        - name: db
+          image: mongodb/mongodb-community-server
+          env:
+          - name: MONGODB_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-creds-secret
+                key: mongodb-username
+          - name: MONGODB_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-creds-secret
+                key: mongodb-password
+          ports:
+            - containerPort: 27017
+              name: dbport # from now on we can use the name http to refer to this port
+          livenessProbe: # checks if the server still works every 5 seconds
+            httpGet:
+              path: /
+              port: dbport
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe: # checks if the server is ready to accept traffic
+            httpGet:
+              path: /
+              port: dbport
             initialDelaySeconds: 2
           resources:
             limits:
