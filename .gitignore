@@ -3,4 +3,4 @@
 .ghcr*
 hello-world
 *secret*
-!*example*
+!*.example

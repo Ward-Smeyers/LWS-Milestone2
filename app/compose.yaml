@@ -14,8 +14,8 @@ services:
     build: ./api
     environment:
       - FRONTEND_URL=http://milestone2.local
-      - MONGODB_USERNAME=${MONGODB_INITDB_ROOT_USERNAME}
-      - MONGODB_PASSWORD=${MONGODB_INITDB_ROOT_PASSWORD}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_HOST=db
     ports:
       - 8080:80
