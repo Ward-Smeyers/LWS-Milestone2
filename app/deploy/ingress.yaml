@@ -4,14 +4,16 @@ kind: Ingress
 metadata:
   name: milestone2-ingress
   namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
-    - hosts:
-      - milestone2.local
-      - api.milestone2.local
+    - hosts: 
+      - milestone2.smeyers.xyz
+      - api.milestone2.smeyers.xyz
       secretName: smeyers-tls
   rules:
-    - host: milestone2.local
+    - host: milestone2.smeyers.xyz
       http:
         paths:
           - path: /
@@ -21,7 +23,7 @@ spec:
                 name: web-service
                 port:
                   name: webport
-    - host: api.milestone2.local
+    - host: api.milestone2.smeyers.xyz
       http:
         paths:
           - path: /
