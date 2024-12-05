@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
+@app.on_event("startup") # Runs when the application starts
 def startup_db_client():
     print(f"Cross-Origin Resource Sharing enabled for {origins}!")
     print("Connecting to the MongoDB database!")
@@ -77,6 +77,4 @@ def read_item(name = "Ward Smeyers"):
 
 @app.get("/id")
 def read_item():
-    resp = socket.gethostname()
-    print(resp)
-    return {"id": resp}
+    return {"id": socket.gethostname()}

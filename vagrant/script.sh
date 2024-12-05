@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set timezone and enable ntp
+# Set timezone and enable ntp
 timedatectl set-timezone Europe/Brussels
 timedatectl set-ntp true
 
@@ -18,13 +18,13 @@ echo \
   tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt-get update
 
-# install docker tools
+# Install docker tools
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# login to docker hub, recwiers .docker_password file vagrant synced_folder
+# Login to docker hub, recwiers .docker_password file vagrant synced_folder
 cat /vagrant/.docker_password | docker login --username automator2 --password-stdin
 
-# add docker group and add vagrant user to docker group
+# Add docker group and add vagrant user to docker group
 newgrp docker
 usermod -aG docker vagrant
 groups vagrant
@@ -33,24 +33,24 @@ groups vagrant
 su vagrant
 cd /home/vagrant
 
-# install kind
+# Install kind
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
 chmod +x ./kind
 mv ./kind /usr/local/bin/kind
 
-# install kubectl
+# Install kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
 echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
 install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 kubectl version --client
 
-# install helm
+# Install helm
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
 
-# add alias to 
+# Add alias to 
 echo '
 # add alias for docker
 alias d="docker $@"
@@ -93,28 +93,26 @@ function kcc () {
     fi
 }'>> /home/vagrant/.bashrc
 
-# create kind cluster
+# Create kind cluster
 kind delete cluster
 kind create cluster --config=/vagrant/kindconfig
 kind get clusters
 
-# copy kubeconfig to vagrant user
+# Copy kubeconfig to vagrant user
 cp -r /root/.kube /home/vagrant/
 chown -R vagrant:vagrant .kube
 
-# install ingress-nginx
+# Install ingress-nginx
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
-# install cert-manager
+# Install cert-manager
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
 
-# wait for ingress-nginx to be ready
+# Wait for ingress-nginx to be ready
 kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
 
 GITHUB_USERNAME=Ward-Smeyers
 GITHUB_TOKEN=$(cat /vagrant/.ghcr.io_token)
 kubectl create secret docker-registry ghcr-login-secret --docker-server=https://ghcr.io --docker-username=$GITHUB_USERNAME --docker-password=$GITHUB_TOKEN 
 
-# apply k8s resources
-kubectl apply -f /app/deployment.yaml
-kubectl apply -f /app/service.yaml
-kubectl apply -f /app/ingress.yaml
+# Apply k8s resources
+kubectl apply -f /app/deploy

@@ -1,3 +1,4 @@
 # https://github.com/spujadas/lighttpd-docker
 FROM sebp/lighttpd:latest 
+# Copy the webpage to the default folder
 COPY index.html /var/www/localhost/htdocs
