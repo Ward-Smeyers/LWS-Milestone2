@@ -1,14 +1,20 @@
 services:
   web:
-    build: ./web  # Build the web service from the Dockerfile
+    # Build the web service from the Dockerfile
+    build: ./web
     ports:
-      - 80:80  # Map port 80 of the host to port 80 of the container
+      # Map port 80 of the host to port 80 of the container
+      - 80:80
     volumes:
-      - ./web:/var/www/localhost/htdocs  # Mount the ./web directory to /var/www/localhost/htdocs in the container
-    tty: true  # Allocate a pseudo-TTY necessary for the startup script in this image
+      # Mount the ./web to /var/www/localhost/htdocs in the container
+      - ./web:/var/www/localhost/htdocs
+    # Add a pseudo-TTY necessary for the startup script in this image
+    tty: true
     depends_on:
-      - api  # The web service depends on the api service
-    restart: unless-stopped  # Always restart the container unless it is explicitly stopped
+      # The web service depends on the api service
+      - api
+    # Always restart the container unless it is explicitly stopped
+    restart: unless-stopped
 
   api:
     build: ./api  # Build the api service from the Dockerfile
