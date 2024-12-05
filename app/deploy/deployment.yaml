@@ -13,7 +13,7 @@ spec:
     metadata:
       labels:
         app: web
-    spec: # this is our pod spec!
+    spec:
       imagePullSecrets:
       - name: ghcr-login-secret
       containers:
@@ -22,19 +22,23 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 80
-              name: webport # from now on we can use the name http to refer to this port
+              # From now on we can use the name http to refer to this port
+              name: webport
           tty: true
-          livenessProbe: # checks if the server still works every 5 seconds
+          # Checks if the server still works every 5 seconds
+          livenessProbe:
             httpGet:
               path: /
               port: webport
             initialDelaySeconds: 5
             periodSeconds: 5
-          readinessProbe: # checks if the server is ready to accept traffic
+          # Checks if the server is ready to accept traffic
+          readinessProbe:
             httpGet:
               path: /
               port: webport
             initialDelaySeconds: 2
+          # Resource limits to prevent vscode form displaying warnings😁
           resources:
             limits:
               memory: "512Mi"
