@@ -1,3 +1,5 @@
+*.docx
+*.tmp
 .vagrant
 .docker_*
 .ghcr*
