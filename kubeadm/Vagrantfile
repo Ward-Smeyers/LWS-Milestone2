@@ -1,36 +1,35 @@
 
 Vagrant.configure("2") do |config|
-  config.vm.define "milestone2-master"
-  config.vm.box = "generic/ubuntu2204"
-  config.vm.network "private_network", ip: "192.168.56.10"
-  config.vm.provider "virtualbox" do |v|
-    v.name = "milestone2-master"
-    v.memory = 4096
-    v.cpus = 4
-  end
-  
-  config.vm.hostname = "milestone2-master"
-  config.vm.synced_folder ".", "/kubeadm"
-  config.vm.synced_folder "../app", "/app"
   config.vm.provision "shell", path: "./script.sh"
-  config.vm.provision "shell", path: "./master.sh"
+  config.vm.define "master" do |master|
+    master.vm.box = "generic/ubuntu2204"
+    master.vm.network "private_network", ip: "10.10.10.10", virtualbox__intnet: true
+    master.vm.network "private_network", ip: "192.168.56.10"
+    master.vm.provider "virtualbox" do |v|
+      v.name = "milestone2-master"
+      v.memory = 4096
+      v.cpus = 8
+    end
+    
+    master.vm.hostname = "milestone2-master"
+    master.vm.synced_folder ".", "/kubeadm"
+    master.vm.synced_folder "../app", "/app"
+    # master.vm.provision "shell", path: "./master.sh"
 
-end
-
-Vagrant.configure("2") do |config|
-  config.vm.define "milestone2-worker1"
-  config.vm.box = "generic/ubuntu2204"
-  config.vm.network "private_network", ip: "192.168.56.11"
-  config.vm.provider "virtualbox" do |v|
-    v.name = "milestone2-worker1"
-    v.memory = 4096
-    v.cpus = 4
   end
-  
-  config.vm.hostname = "milestone2-worker1"
-  config.vm.synced_folder ".", "/kubeadm"
-  config.vm.synced_folder "../app", "/app"
-  config.vm.provision "shell", path: "./script.sh"
-  # config.vm.provision "shell", path: "./join-command.sh"
 
+  config.vm.define "worker1" do |worker1|
+    worker1.vm.box = "generic/ubuntu2204"
+    worker1.vm.network "private_network", ip: "10.10.10.11", virtualbox__intnet: true
+    worker1.vm.provider "virtualbox" do |v|
+      v.name = "milestone2-worker1"
+      v.memory = 4096
+      v.cpus = 8
+    end
+    
+    worker1.vm.hostname = "milestone2-worker1"
+    worker1.vm.synced_folder ".", "/kubeadm"
+    worker1.vm.synced_folder "../app", "/app"
+    # worker1.vm.provision "shell", inline: "/kubeadm/join-command.sh"
+  end
 end
