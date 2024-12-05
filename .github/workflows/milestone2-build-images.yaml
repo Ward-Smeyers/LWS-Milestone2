@@ -1,10 +1,12 @@
 name: 'milestone2-build-images'
 
-# Configures this workflow to run every time a change is pushed to the branch called `release`.
+# Configures this workflow to run every time a change is pushed to the branch called 'main' inthe folder 'app'.
+# Or when the workflow file itself is changed.
 on:
   push:
     paths:
-      - 'app/**'
+      - 'app/api/**'
+      - 'app/web/**'
       - '.github/workflows/milestone2-build-images.yaml'
     branches: [ "main" ]
 
@@ -52,14 +54,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      
-      # # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see "[AUTOTITLE](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)." 
-      # - name: Generate artifact attestation
-      #   uses: actions/attest-build-provenance@v1
-      #   with:
-      #     subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-      #     subject-digest: ${{ steps.push.outputs.digest }}
-      #     push-to-registry: false
 
   build-and-push-api:
     name: api
@@ -98,12 +92,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      
-      # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see "[AUTOTITLE](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)." 
-      # - name: Generate artifact attestation
-      #   uses: actions/attest-build-provenance@v1
-      #   with:
-      #     subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-      #     subject-digest: ${{ steps.push.outputs.digest }}
-      #     push-to-registry: false
-      
