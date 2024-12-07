@@ -5,7 +5,7 @@ kubeadm config images pull
 kubeadm init --pod-network-cidr=172.16.0.0/12 --control-plane-endpoint=10.10.10.10 # --resolve-conf=/run/systemd/resolve/resolv.conf
 
 # Get join command for worker nodes
-# kubeadm token create --print-join-command > /kubeadm/join-command.sh
+kubeadm token create --print-join-command > /kubeadm/join-command.sh
 
 # Copy kubeconfig to vagrant user
 mkdir -p $HOME/.kube
@@ -13,40 +13,24 @@ cp /etc/kubernetes/admin.conf /home/vagrant/.kube/config
 cp /etc/kubernetes/admin.conf /root/.kube/config
 chown vagrant:vagrant /home/vagrant/.kube/config
 
-# export KUBECONFIG=/etc/kubernetes/admin.conf
+# Install Calico networking
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+watch kubectl get pods -n calico-system
+# Install ingress-nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+# Install cert-manager
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
 
-# kubectl -n kube-system get cm kubeadm-config -o yaml
+# wait for ingress-nginx to be ready
+kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
 
-# # Install Calico networking
-# kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/tigera-operator.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/custom-resources.yaml
-# watch kubectl get pods -n calico-system
-kubectl taint nodes --all node-role.kubernetes.io/control-plane-
-kubectl get nodes -o wide
-# # Install ingress-nginx
-# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
-# # Install cert-manager
-# kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
+# Create secret for ghcr.io login (github container registry)
+GITHUB_USERNAME=Ward-Smeyers
+GITHUB_TOKEN=$(cat /kubeadm/.ghcr.io_token)
+kubectl create secret docker-registry ghcr-login-secret --docker-server=https://ghcr.io --docker-username=$GITHUB_USERNAME --docker-password=$GITHUB_TOKEN 
 
-# kubectl get nodes
-# kubectl get pods --all-namespaces
-# kubectl get pods --all-namespaces -o wide
-# kubectl get pods --all-namespaces -o wide --watch
-
-
-
-# # wait for ingress-nginx to be ready
-# kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
-
-# GITHUB_USERNAME=Ward-Smeyers
-# GITHUB_TOKEN=$(cat /kubeadm/.ghcr.io_token)
-# kubectl create secret docker-registry ghcr-login-secret --docker-server=https://ghcr.io --docker-username=$GITHUB_USERNAME --docker-password=$GITHUB_TOKEN 
-
-# # Apply k8s resources
-# kubectl apply -f /app/deployment.yaml
-# kubectl apply -f /app/service.yaml
-# kubectl apply -f /app/ingress.yaml
+# Apply k8s resources
+kubectl apply -f /app/deploy
 
 # Add kubectl alias and kcc function to .bashrc
 echo '
