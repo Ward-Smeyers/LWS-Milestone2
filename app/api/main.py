@@ -26,12 +26,12 @@ app.add_middleware(
 def startup_db_client():
     print(f"Cross-Origin Resource Sharing enabled for {origins}!")
     print("Connecting to the MongoDB database!")
-    app.mongodb_client = MongoClient(f'mongodb://{environ["MONGODB_USERNAME"]}:{environ["MONGODB_PASSWORD"]}@{environ["MONGODB_HOST"]}', tls=False)
-    app.database = app.mongodb_client[environ["MONGODB_HOST"]]
-    app.collection = app.database["name"]
+    # app.mongodb_client = MongoClient(f'mongodb://{environ["MONGODB_USERNAME"]}:{environ["MONGODB_PASSWORD"]}@{environ["MONGODB_HOST"]}', tls=False)
+    # app.database = app.mongodb_client[environ["MONGODB_HOST"]]
+    # app.collection = app.database["name"]
     connected = False
     retry_count = 0
-    max_retries = environ["MAX_RETRIES"]
+    # max_retries = environ["MAX_RETRIES"]
     while connected == False:
         try:
             app.mongodb_client.admin.command("ping")
