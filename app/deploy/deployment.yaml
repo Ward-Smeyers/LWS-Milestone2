@@ -92,7 +92,8 @@ spec:
 
           ports:
             - containerPort: 80
-              name: apiport # from now on we can use the name http to refer to this port
+              name: apiport
+               # from now on we can use the name http to refer to this port
           livenessProbe: # checks if the server still works every 5 seconds
             httpGet:
               path: /

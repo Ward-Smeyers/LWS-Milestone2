@@ -110,6 +110,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 # Wait for ingress-nginx to be ready
 kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
 
+# Create secret for ghcr.io login (github container registry)
 GITHUB_USERNAME=Ward-Smeyers
 GITHUB_TOKEN=$(cat /vagrant/.ghcr.io_token)
 kubectl create secret docker-registry ghcr-login-secret --docker-server=https://ghcr.io --docker-username=$GITHUB_USERNAME --docker-password=$GITHUB_TOKEN 
